@@ -6,23 +6,76 @@
 	<meta name="viewport" content="width=device-width , initial-scale=1">
 	<title>Patatap Clone</title>
 	<script type="text/javascript" src="js/paper-full.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.14/howler.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/circles.css">
 </head>
 
 <body>
 	<script type="text/paperscript" canvas="myCanvas">
-
-	
+		
+		var keyData = {
+		q: {
+			color: "cyan",
+			sound: new Howl({
+			src: ['sounds/bubbles.mp3']
+			})
+		},
+		
+		w: {
+			color: "magenta",
+			sound: new Howl({
+			src: ['sounds/clay.mp3']
+			})
+		},
+		
+		e: {
+			color: "yellow",
+			sound: new Howl({
+			src: ['sounds/confetti.mp3']
+			})
+		},
+		
+		start here with r and new sound: {
+			color: "cyan",
+			sound: new Howl({
+			src: ['sounds/bubbles.mp3']
+			})
+		},
+	}
+		
+		var circles = [];
 		
 		function onKeyDown(event){
-		// Max point that a circle can originate
-			var maxPoint = new Point(view.size.width, view.size.height);
-		// Makes a random point to interact with maxPoint
-			var randomPoint = Point.random();
-		// This will generate an actual random point
-			var point = maxPoint * randomPoint;
-		// When a key is pressed, make a circle 
-			new Path.Circle(new Point(point), 50).fillColor = 'red'; }
+			if(keyData[event.key]){
+				
+			//Max point that a circle can originate
+				var maxPoint = new Point(view.size.width, view.size.height);
+			//Makes a random point to interact with maxPoint
+				var randomPoint = Point.random();
+			//This will generate an actual random point
+				var point = maxPoint * randomPoint;
+			//Variable to hold circle to be able to push to the array
+				var newCircle = new Path.Circle(point, 500)
+				newCircle.fillColor = "green";
+			//When a key is pressed, make a circle using keyData values
+				newCircle.fillColor = keyData[event.key].color;
+				keyData[event.key].sound.play();
+				circles.push(newCircle);
+				}
+			}
+			
+		function onFrame(event){
+			for(var i=0; i < circles.length; i++){
+				circles[i].fillColor.hue +=1;
+				circles[i].scale(.9);
+				if(circles[i].area < 1){
+					circles[i].remove(); //Remove the circle from the canvas
+					circles.splice(i,1); //Remove the circle from the array
+					i--; //decrement i so that the loop does not skip a circle from splice()
+					console.log(circles);
+			}		
+		}
+	}
 
 	</script>
 
